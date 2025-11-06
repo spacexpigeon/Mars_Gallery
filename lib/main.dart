@@ -6,10 +6,6 @@ import 'package:parcelviewer/features/gallery/logic/gallery_controller.dart';
 import 'package:parcelviewer/features/gallery/ui/gallery_page.dart';
 
 void main() {
-  // (opcjonalnie) dopasuj globalny limit pamięciowego ImageCache:
-  // PaintingBinding.instance.imageCache.maximumSize = 200;
-  // PaintingBinding.instance.imageCache.maximumSizeBytes = 256 << 20; // 256 MB
-
   runApp(const MarsApp());
 }
 
@@ -18,19 +14,25 @@ class MarsApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final api = ApiClient(baseUrl: 'https://example.com/api'); // PODMIEŃ
-    final repo = PhotoRepository(api);
+ 
+    final api = ApiClient(); 
 
-    return MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (_) => GalleryController(repo: repo, pageSize: 10)),
-      ],
+
+    const nasaKey = 'V4CYE5ThmFj4AFAgFMab0WnvCyVKJCS9UuVwyIxg'; 
+
+
+    final repo = PhotoRepository(
+      api,
+      apiKey: nasaKey,
+      rover: 'curiosity',
+      sol: 1000,
+  
+    );
+
+        return ChangeNotifierProvider(
+      create: (_) => GalleryController(repo: repo, pageSize: 25), // <— bez ..loadInit()
       child: MaterialApp(
-        title: 'Mars Gallery',
-        theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepOrange),
-          useMaterial3: true,
-        ),
+        debugShowCheckedModeBanner: false,
         home: const GalleryPage(),
       ),
     );
