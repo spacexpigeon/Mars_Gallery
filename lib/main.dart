@@ -30,7 +30,7 @@ class MarsApp extends StatelessWidget {
     );
 
         return ChangeNotifierProvider(
-      create: (_) => GalleryController(repo: repo, pageSize: 25), // <— bez ..loadInit()
+      create: (_) => GalleryController(repo: repo, pageSize: 25), 
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         home: const GalleryPage(),

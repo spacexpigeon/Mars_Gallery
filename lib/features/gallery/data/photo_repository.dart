@@ -5,13 +5,12 @@ class PhotoRepository {
     this.api, {
     required this.apiKey,
     this.rover = 'curiosity',
-    this.sol = 1000,       // możesz zamiast tego ustawić earthDate
-    this.earthDate,        // np. '2015-05-30'
+    this.sol = 1000,
+    this.earthDate,
   });
 
   final ApiClient api;
   final String apiKey;
-
   final String rover;
   final int? sol;
   final String? earthDate;
@@ -25,9 +24,9 @@ class PhotoRepository {
       apiKey: apiKey,
     );
 
-    // NASA czasem zwraca http – wymuś https, żeby Android nie blokował
     return photos
         .map((e) => (e['img_src'] as String).replaceFirst('http://', 'https://'))
         .toList();
   }
 }
+

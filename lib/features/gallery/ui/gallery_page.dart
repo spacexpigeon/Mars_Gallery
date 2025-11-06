@@ -12,7 +12,7 @@ class _GalleryPageState extends State<GalleryPage> {
   @override
   void initState() {
     super.initState();
-    // Uruchom pierwsze ładowanie PO zbudowaniu pierwszej klatki
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
         context.read<GalleryController>().loadInit();
@@ -31,7 +31,7 @@ class _GalleryPageState extends State<GalleryPage> {
         child: ListView.builder(
           itemCount: c.photos.length + 1,
           itemBuilder: (ctx, i) {
-            // Ostatni „sentinel” – doładowanie następnej strony
+
             if (i == c.photos.length) {
               WidgetsBinding.instance.addPostFrameCallback((_) {
                 if (mounted) {

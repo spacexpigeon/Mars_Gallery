@@ -11,7 +11,7 @@ class Prefetcher {
   Prefetcher(this.cache);
 
   void schedule(List<String> urls) {
-    // unikamy duplikatów
+
     for (final u in urls) {
       if (!_queue.contains(u)) _queue.add(u);
     }
@@ -26,9 +26,9 @@ class Prefetcher {
     try {
       while (_queue.isNotEmpty) {
         final url = _queue.removeAt(0);
-        // pobierz do dysku
+
         await cache.getSingleFile(url);
-        // nie blokujemy UI
+
         await Future<void>.delayed(const Duration(milliseconds: 10));
       }
     } finally {
@@ -36,14 +36,13 @@ class Prefetcher {
     }
   }
 
-  /// Opcjonalnie: precache do pamięci/GPUs, gdy mamy BuildContext (np. po buildzie)
   Future<void> precacheToMemory(BuildContext context, List<String> urls) async {
     for (final url in urls) {
       final provider = CachedNetworkImageProvider(url, cacheManager: cache);
       try {
         await precacheImage(provider, context);
       } catch (_) {
-        // ignoruj pojedyncze błędy
+
       }
     }
   }
