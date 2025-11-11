@@ -7,8 +7,8 @@ class MarsCache {
     return CacheManager(
       Config(
         key,
-        stalePeriod: const Duration(days: 14), // 2 tygodnie
-        maxNrOfCacheObjects: 500,             
+        stalePeriod: const Duration(days: 30), // 30 dni
+        maxNrOfCacheObjects: 1000, // Więcej obiektów w cache
         repo: JsonCacheInfoRepository(databaseName: key),
         fileService: HttpFileService(),
       ),

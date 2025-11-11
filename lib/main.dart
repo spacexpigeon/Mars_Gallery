@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:parcelviewer/core/api_client.dart';
-import 'package:parcelviewer/features/gallery/data/photo_repository.dart';
-import 'package:parcelviewer/features/gallery/logic/gallery_controller.dart';
-import 'package:parcelviewer/features/gallery/ui/gallery_page.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'presentation/pages/gallery_page.dart';
+import 'presentation/theme/app_theme.dart';
 
 void main() {
-  runApp(const MarsApp());
+  runApp(
+    const ProviderScope(
+      child: MarsApp(),
+    ),
+  );
 }
 
 class MarsApp extends StatelessWidget {
@@ -14,27 +16,11 @@ class MarsApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
- 
-    final api = ApiClient(); 
-
-
-    const nasaKey = 'V4CYE5ThmFj4AFAgFMab0WnvCyVKJCS9UuVwyIxg'; 
-
-
-    final repo = PhotoRepository(
-      api,
-      apiKey: nasaKey,
-      rover: 'curiosity',
-      sol: 1000,
-  
-    );
-
-        return ChangeNotifierProvider(
-      create: (_) => GalleryController(repo: repo, pageSize: 25), 
-      child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-        home: const GalleryPage(),
-      ),
+    return MaterialApp(
+      title: 'Mars Gallery',
+      debugShowCheckedModeBanner: false,
+      theme: AppTheme.darkTheme,
+      home: const GalleryPage(),
     );
   }
 }
