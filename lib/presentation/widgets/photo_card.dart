@@ -3,7 +3,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../domain/entities/photo.dart';
-import '../../core/cache.dart';
+import '../../core/cache.dart'; // Odkomentowane, bo używamy Twojego cache.dart
 import '../theme/app_theme.dart';
 
 class PhotoCard extends ConsumerStatefulWidget {
@@ -50,7 +50,6 @@ class _PhotoCardState extends ConsumerState<PhotoCard>
       ),
     );
 
-    // Delay animation based on index for staggered effect
     Future.delayed(Duration(milliseconds: widget.index * 50), () {
       if (mounted) {
         _controller.forward();
@@ -66,6 +65,11 @@ class _PhotoCardState extends ConsumerState<PhotoCard>
 
   @override
   Widget build(BuildContext context) {
+    // 1. WYMUSZENIE HTTPS (KLUCZOWE!)
+    // CachedNetworkImage nie lubi HTTP na Androidzie.
+    // Zamieniamy link http://... na https://...
+    final imageUrl = widget.photo.url.replaceFirst('http://', 'https://');
+
     return AnimatedBuilder(
       animation: _controller,
       builder: (context, child) {
@@ -86,7 +90,7 @@ class _PhotoCardState extends ConsumerState<PhotoCard>
             borderRadius: BorderRadius.circular(20),
             boxShadow: [
               BoxShadow(
-                color: AppTheme.highlightColor.withValues(alpha: 0.2),
+                color: AppTheme.highlightColor.withOpacity(0.2),
                 blurRadius: 20,
                 offset: const Offset(0, 10),
               ),
@@ -98,13 +102,15 @@ class _PhotoCardState extends ConsumerState<PhotoCard>
               fit: StackFit.expand,
               children: [
                 CachedNetworkImage(
-                  imageUrl: widget.photo.url,
+                  imageUrl: imageUrl, // Używamy wersji HTTPS
                   fit: BoxFit.cover,
-                  cacheManager: MarsCache.build(),
-                  memCacheWidth: 800, // Ograniczenie rozmiaru w pamięci
+                  
+                  // 2. PRZYWRACAMY TWÓJ CACHE MANAGER
+                  // Ponieważ zmieniliśmy klucz w cache.dart, to zadziała jak "nowy start"
+                  cacheManager: MarsCache.build(), 
+                  
+                  memCacheWidth: 800,
                   memCacheHeight: 600,
-                  maxWidthDiskCache: 1200, // Maksymalny rozmiar na dysku
-                  maxHeightDiskCache: 900,
                   fadeInDuration: const Duration(milliseconds: 200),
                   fadeOutDuration: const Duration(milliseconds: 100),
                   placeholder: (context, url) => Shimmer.fromColors(
@@ -114,18 +120,20 @@ class _PhotoCardState extends ConsumerState<PhotoCard>
                       color: AppTheme.surfaceColor,
                     ),
                   ),
-                  errorWidget: (context, url, error) => Container(
-                    color: AppTheme.surfaceColor,
-                    child: const Center(
-                      child: Icon(
-                        Icons.error_outline,
-                        color: AppTheme.textSecondary,
-                        size: 40,
+                  errorWidget: (context, url, error) {
+                    print('❌ BŁĄD: $url -> $error');
+                    return Container(
+                      color: AppTheme.surfaceColor,
+                      child: const Center(
+                        child: Icon(
+                          Icons.broken_image_outlined,
+                          color: Colors.red, // Czerwona ikona oznacza błąd ładowania
+                          size: 40,
+                        ),
                       ),
-                    ),
-                  ),
+                    );
+                  },
                 ),
-                // Gradient overlay for better text readability
                 Positioned(
                   bottom: 0,
                   left: 0,
@@ -137,7 +145,7 @@ class _PhotoCardState extends ConsumerState<PhotoCard>
                         end: Alignment.bottomCenter,
                         colors: [
                           Colors.transparent,
-                          Colors.black.withValues(alpha: 0.7),
+                          Colors.black.withOpacity(0.7),
                         ],
                       ),
                     ),
@@ -146,23 +154,21 @@ class _PhotoCardState extends ConsumerState<PhotoCard>
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        if (widget.photo.roverName != null)
-                          Text(
-                            widget.photo.roverName!,
-                            style: const TextStyle(
-                              color: AppTheme.textPrimary,
-                              fontSize: 14,
-                              fontWeight: FontWeight.w600,
-                            ),
+                        Text(
+                          widget.photo.roverName ?? 'Rover',
+                          style: const TextStyle(
+                            color: AppTheme.textPrimary,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
                           ),
-                        if (widget.photo.cameraName != null)
-                          Text(
-                            widget.photo.cameraName!,
-                            style: const TextStyle(
-                              color: AppTheme.textSecondary,
-                              fontSize: 12,
-                            ),
+                        ),
+                        Text(
+                          widget.photo.cameraName ?? 'Camera',
+                          style: const TextStyle(
+                            color: AppTheme.textSecondary,
+                            fontSize: 12,
                           ),
+                        ),
                       ],
                     ),
                   ),
@@ -175,4 +181,3 @@ class _PhotoCardState extends ConsumerState<PhotoCard>
     );
   }
 }
-

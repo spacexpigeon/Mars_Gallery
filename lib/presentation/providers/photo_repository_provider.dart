@@ -6,8 +6,8 @@ import '../../data/repositories/photo_repository_impl.dart';
 import '../../domain/repositories/photo_repository.dart';
 
 /// Provider dla NASA API Client
-final nasaApiClientProvider = Provider<NasaApiClient>((ref) {
-  return NasaApiClient();
+final nasaApiClientProvider = Provider<MarsApiClient>((ref) {
+  return MarsApiClient();
 });
 
 /// Provider dla data source

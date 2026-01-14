@@ -1,6 +1,5 @@
 import 'package:parcelviewer/core/nasa_api_client.dart';
 
-/// Data source do pobierania zdjęć z NASA Images API
 abstract class NasaPhotoDataSource {
   Future<List<Map<String, dynamic>>> fetchMarsPhotos({
     String? keywords,
@@ -10,7 +9,7 @@ abstract class NasaPhotoDataSource {
 }
 
 class NasaPhotoDataSourceImpl implements NasaPhotoDataSource {
-  final NasaApiClient apiClient;
+  final MarsApiClient apiClient;
 
   NasaPhotoDataSourceImpl(this.apiClient);
 
@@ -20,12 +19,7 @@ class NasaPhotoDataSourceImpl implements NasaPhotoDataSource {
     int page = 1,
     int pageSize = 100,
   }) async {
-    return await apiClient.fetchImages(
-      keywords: keywords ?? 'curiosity mastcam',
-      mediaType: 'image',
-      page: page,
-      pageSize: pageSize,
-    );
+    return await apiClient.fetchImages();
   }
 }
 
