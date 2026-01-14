@@ -3,7 +3,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../domain/entities/photo.dart';
-import '../../core/cache.dart'; // Odkomentowane, bo używamy Twojego cache.dart
+import '../../core/cache.dart'; 
 import '../theme/app_theme.dart';
 
 class PhotoCard extends ConsumerStatefulWidget {
@@ -65,9 +65,7 @@ class _PhotoCardState extends ConsumerState<PhotoCard>
 
   @override
   Widget build(BuildContext context) {
-    // 1. WYMUSZENIE HTTPS (KLUCZOWE!)
-    // CachedNetworkImage nie lubi HTTP na Androidzie.
-    // Zamieniamy link http://... na https://...
+
     final imageUrl = widget.photo.url.replaceFirst('http://', 'https://');
 
     return AnimatedBuilder(
@@ -102,11 +100,10 @@ class _PhotoCardState extends ConsumerState<PhotoCard>
               fit: StackFit.expand,
               children: [
                 CachedNetworkImage(
-                  imageUrl: imageUrl, // Używamy wersji HTTPS
+                  imageUrl: imageUrl, 
                   fit: BoxFit.cover,
                   
-                  // 2. PRZYWRACAMY TWÓJ CACHE MANAGER
-                  // Ponieważ zmieniliśmy klucz w cache.dart, to zadziała jak "nowy start"
+
                   cacheManager: MarsCache.build(), 
                   
                   memCacheWidth: 800,
@@ -127,7 +124,7 @@ class _PhotoCardState extends ConsumerState<PhotoCard>
                       child: const Center(
                         child: Icon(
                           Icons.broken_image_outlined,
-                          color: Colors.red, // Czerwona ikona oznacza błąd ładowania
+                          color: Colors.red, 
                           size: 40,
                         ),
                       ),

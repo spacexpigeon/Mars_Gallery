@@ -1,10 +1,10 @@
 import 'dart:convert';
 import 'package:dio/dio.dart';
 
-/// Client do komunikacji z Mars Photos API (Android Codelab)
+
 /// Base URL: https://android-kotlin-fun-mars-server.appspot.com
 class MarsApiClient {
-  // Nowy Base URL z kursu Android Kotlin
+//Base URL z kursu Android Kotlin
   static const String _baseUrl = 'https://android-kotlin-fun-mars-server.appspot.com';
   
   late final Dio _dio;
@@ -22,20 +22,20 @@ class MarsApiClient {
       ),
     );
 
-    // Interceptor do logowania
+  
     _dio.interceptors.add(
       InterceptorsWrapper(
         onRequest: (options, handler) {
-          print('🌍 Mars Photos API Request: ${options.method} ${options.uri}');
+          print('Mars Photos API Request: ${options.method} ${options.uri}');
           handler.next(options);
         },
         onResponse: (response, handler) {
           final count = (response.data is List) ? (response.data as List).length : 0;
-          print('✅ Mars Photos API Response: ${response.statusCode} - $count images');
+          print('Mars Photos API Response: ${response.statusCode} - $count images');
           handler.next(response);
         },
         onError: (error, handler) {
-          print('❌ Mars Photos API Error: ${error.message}');
+          print('Mars Photos API Error: ${error.message}');
           handler.next(error);
         },
       ),
@@ -43,9 +43,7 @@ class MarsApiClient {
   }
 
   /// Pobiera zdjęcia z API Codelaba
-  /// 
-  /// Zauważ: To API jest prostsze i nie obsługuje paginacji ani wyszukiwania
-  /// tak jak poprzednie API NASA. Parametry zostały usunięte.
+
   Future<List<Map<String, dynamic>>> fetchImages() async {
     try {
       final response = await _dio.get('/photos');
@@ -81,7 +79,7 @@ class MarsApiClient {
       throw Exception('Błąd podczas pobierania zdjęć: $e');
     }
   }
-// W pliku nasa_api_client.dart
+
 
 List<Map<String, dynamic>> _extractImages(List<dynamic> list) {
     return list.map((item) {
@@ -89,7 +87,6 @@ List<Map<String, dynamic>> _extractImages(List<dynamic> list) {
         return {
           'id': item['id'] as String?,
           
-          // 👇 ZMIEŃ TĘ LINIJKĘ - TO NAPRAWI ZDJĘCIA
           'img_src': (item['img_src'] as String?)?.replaceAll('http://', 'https://'), 
           
           'title': 'Mars Photo ${item['id']}',
@@ -103,7 +100,6 @@ List<Map<String, dynamic>> _extractImages(List<dynamic> list) {
       return <String, dynamic>{};
     }).where((img) => img['img_src'] != null).toList();
   }
-  /// Obsługuje błędy Dio
   Exception _handleDioError(DioException error) {
     switch (error.type) {
       case DioExceptionType.connectionTimeout:
